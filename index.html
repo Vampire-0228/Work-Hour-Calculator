@@ -30,8 +30,13 @@ const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwwS-GQMJu9BdoMQ9EeP
 
 function sendPunch(actionType) {
     const now = new Date();
-    // Format time as HH:MM:SS
-    const timeString = now.toTimeString().split(' ')[0]; 
+    
+    // Manually create a foolproof 24-hour time string (e.g., "20:44:19")
+    const hours = String(now.getHours()).padStart(2, '0');
+    const minutes = String(now.getMinutes()).padStart(2, '0');
+    const seconds = String(now.getSeconds()).padStart(2, '0');
+    const timeString = `${hours}:${minutes}:${seconds}`;
+    
     const dateString = now.toLocaleDateString();
 
     const payload = {
