@@ -30,11 +30,15 @@ const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwp72CfFo6UCbS0aIGlv
 
 function sendPunch(actionType) {
     const now = new Date();
+    // Format time as HH:MM:SS
+    const timeString = now.toTimeString().split(' ')[0]; 
+    const dateString = now.toLocaleDateString();
+
     const payload = {
         action: actionType,
-        date: now.toLocaleDateString(),
-        punchIn: actionType === 'punchIn' ? now.toLocaleTimeString() : '',
-        punchOut: actionType === 'punchOut' ? now.toLocaleTimeString() : ''
+        date: dateString,
+        punchIn: actionType === 'punchIn' ? timeString : '',
+        punchOut: actionType === 'punchOut' ? timeString : ''
     };
 
     document.getElementById('status').innerText = 'Sending to sheet...';
