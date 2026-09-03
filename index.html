@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Work Time Tracker Link</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; padding: 50px; background: #f4f4f9; }
+        .card { background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); display: inline-block; }
+        button { padding: 15px 30px; font-size: 18px; margin: 10px; cursor: pointer; border: none; border-radius: 5px; color: white; }
+        #inBtn { background-color: #28a745; }
+        #outBtn { background-color: #dc3545; }
+        button:disabled { background-color: #ccc; cursor: not-allowed; }
+        #status { margin-top: 20px; font-weight: bold; color: #333; }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <h2>Work Tracker Link</h2>
+    <p id="status">Ready to punch</p>
+    <div>
+        <button id="inBtn" onclick="sendPunch('punchIn')">Punch In</button>
+        <button id="outBtn" onclick="sendPunch('punchOut')" disabled>Punch Out</button>
+    </div>
+</div>
+
+<script>
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw1WvXvMa71NzjNi_zabrHav7il-LjFjyuLn3Xc6IWY7Aif5ZaCghAsCvM3sU3Q6yjK0g/exec';
+
+function sendPunch(actionType) {
+    const now = new Date();
+    const payload = {
+        action: actionType,
+        date: now.toLocaleDateString(),
+        punchIn: actionType === 'punchIn' ? now.toLocaleTimeString() : '',
+        punchOut: actionType === 'punchOut' ? now.toLocaleTimeString() : ''
+    };
+
+    document.getElementById('status').innerText = 'Sending to sheet...';
+
+    fetch(SCRIPT_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+    }).then(() => {
+        if (actionType === 'punchIn') {
+            document.getElementById('status').innerText = 'Successfully Punched In!';
+            document.getElementById('inBtn').disabled = true;
+            document.getElementById('outBtn').disabled = false;
+        } else {
+            document.getElementById('status').innerText = 'Successfully Punched Out!';
+            document.getElementById('inBtn').disabled = false;
+            document.getElementById('outBtn').disabled = true;
+        }
+    }).catch(err => {
+        document.getElementById('status').innerText = 'Error connecting to sheet.';
+        console.error(err);
+    });
+}
+</script>
+
+</body>
+</html>
